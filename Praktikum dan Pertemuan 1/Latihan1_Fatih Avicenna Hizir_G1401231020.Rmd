@@ -1,0 +1,176 @@
+---
+title: "MSR Praktikum Pertemuan 1"
+author: "Fatih Avicenna Hizir"
+date: "2026-01-29"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+    df_print: paged
+    code_folding: hide
+    smooth_scroll: true
+    highlight: kate
+    theme: flatly
+    css: styles.css
+---
+
+## SOAL 1
+
+Dalam sebuah kelompok berisi 10 orang, terdapat 4 orang yang mahir dan 6 orang pemula. Sebuah tim dengan 5 anggota akan dipilih secara acak.
+
+1.  Buat simulasi pemilihan tim sebanyak 1000 kali.
+
+2.  Hitung rata-rata jumlah anggota mahir dalam tim berdasarkan simulasi tersebut.
+
+3.  Gambarkan barchart hasil simulasi.
+
+```{r}
+# Menetapkan seed agar hasil simulasi selalu sama (berdasarkan NIM = 020)
+set.seed(020) 
+# *catatan set.seed digunakan agar proses random menghasilkan nilai yang sama setiap dijalankan
+
+# Membuat fungsi simulasi pemilihan tim
+SimulasiTim <- function() {
+  # *catatan fungsi ini digunakan untuk mensimulasikan satu kali pemilihan tim
+  
+  kelompok <- c(rep("Mahir", 4), rep("Pemula", 6))
+  # membuat vektor berisi 10 orang, terdiri dari 4 orang Mahir dan 6 orang Pemula
+  
+  tim <- sample(kelompok, 5, replace = FALSE)
+  # memilih 5 orang secara acak tanpa pengembalian dari kelompok
+  
+  sum(tim == "Mahir")
+  # menghitung jumlah anggota bertipe "Mahir" dalam tim terpilih
+}
+
+# Menjalankan simulasi sebanyak 1000 kali
+hasil <- replicate(1000, SimulasiTim())
+
+
+# Menghitung rata-rata jumlah anggota mahir
+rata_rata_mahir <- mean(hasil)
+
+# Menampilkan hasil rata-rata ke layar
+cat("Rata-rata jumlah anggota mahir dalam tim:", rata_rata_mahir, "\n")
+```
+
+### Visualisasi Soal 1
+
+```{r}
+# Membuat bar chart dari hasil simulasi
+barplot(
+  table(hasil),
+  main = "Distribusi Jumlah Anggota Mahir dalam Tim",
+  xlab = "Jumlah Anggota Mahir",
+  ylab = "Frekuensi",
+  col = "lightblue"
+)
+# *catatan barplot digunakan untuk menampilkan distribusi frekuensi jumlah anggota Mahir
+```
+
+Barplot menunjukkan bahwa jumlah anggota **mahir sebanyak 2 orang** paling sering muncul dalam tim hasil simulasi. Hal ini sesuai dengan proporsi anggota mahir dalam kelompok awal, sehingga jumlah tersebut menjadi yang paling mungkin terjadi. Kejadian dengan anggota mahir sangat sedikit atau sangat banyak relatif jarang muncul.
+
+## SOAL 2
+
+Dalam sebuah lotere, terdapat 100 tiket dengan nomor dari 1 hingga 100. Dari total tiket, hanya 10 tiket yang merupakan tiket pemenang.
+
+1.  Simulasikan pengambilan tiket secara acak sebanyak 3 kali tanpa pengembalian.
+
+2.  Tentukan apakah salah satu tiket yang diambil adalah tiket pemenang.
+
+3.  Ulangi simulasi sebanyak 1000 kali, hitung peluang mendapatkan setidaknya 1 tiket pemenang.
+
+```{r}
+# Menetapkan seed agar hasil simulasi konsisten (berdasarkan NIM = 020)
+set.seed(020)
+# *catatan set.seed digunakan agar hasil pengambilan acak tetap sama setiap dijalankan
+
+# Membuat fungsi simulasi pengambilan tiket lotere
+SimulasiLotere <- function() {
+  # *catatan fungsi ini mensimulasikan satu kali pengambilan 3 tiket
+  
+  tiket <- c(rep("Pemenang", 10), rep("Biasa", 90))
+  # membuat vektor tiket dengan 10 tiket pemenang dan 90 tiket biasa
+  
+  ambil <- sample(tiket, 3, replace = FALSE)
+  # mengambil 3 tiket secara acak tanpa pengembalian
+  
+  any(ambil == "Pemenang")
+  # memeriksa apakah terdapat minimal satu tiket pemenang
+}
+
+# Menentukan jumlah simulasi
+n_simulasi <- 1000
+# *catatan simulasi diulang sebanyak 1000 kali untuk mendekati peluang sebenarnya
+
+# Menjalankan simulasi sebanyak 1000 kali
+hasil_simulasi <- replicate(n_simulasi, SimulasiLotere())
+# *catatan menyimpan hasil TRUE/FALSE dari tiap simulasi
+
+# Menghitung peluang mendapatkan setidaknya satu tiket pemenang
+peluang_menang <- mean(hasil_simulasi)
+# *catatan rata-rata nilai logika TRUE/FALSE merepresentasikan peluang kejadian
+
+# Menampilkan hasil peluang
+cat("Peluang mendapatkan setidaknya 1 tiket pemenang:", peluang_menang, "\n")
+```
+
+## SOAL 3
+
+Sebuah permainan domino menggunakan kartu bernomor 1 hingga 12. Saat kartu pertama diambil, kartu kedua runtuh jika nomor kartu pertama adalah kelipatan dari nomor kartu kedua.
+
+1.  Buat simulasi mengambil 2 kartu acak dari tumpukan (tanpa pengembalian).
+
+2.  Tentukan apakah kartu kedua akan runtuh.
+
+3.  Ulangi simulasi sebanyak 500 kali, hitung berapa kali kartu kedua runtuh, dan hitung peluang runtuhnya kartu kedua.
+
+```{r}
+# Menetapkan seed agar hasil simulasi konsisten (berdasarkan NIM = 020)
+set.seed(020)
+
+# Membuat fungsi simulasi permainan domino
+SimulasiDomino <- function() {
+  # *catatan fungsi ini mensimulasikan satu kali pengambilan dua kartu
+  
+  kartu <- 1:12
+  # vektor kartu domino bernomor 1 sampai 12
+  
+  ambil <- sample(kartu, 2, replace = FALSE)
+  # mengambil dua kartu secara acak tanpa pengembalian
+  
+  kartu_pertama <- ambil[1]
+  # menyimpan nilai kartu pertama
+  
+  kartu_kedua <- ambil[2]
+  # menyimpan nilai kartu kedua
+  
+  kartu_pertama %% kartu_kedua == 0
+  # bernilai TRUE jika kartu pertama kelipatan kartu kedua
+}
+
+# Menentukan jumlah simulasi
+n_simulasi <- 500
+# jumlah pengulangan simulasi
+
+# Menjalankan simulasi
+hasil_simulasi <- replicate(n_simulasi, SimulasiDomino())
+# menyimpan hasil runtuh (TRUE) atau tidak runtuh (FALSE)
+
+# Menghitung jumlah kartu kedua yang runtuh
+jumlah_runtuh <- sum(hasil_simulasi)
+# menghitung total kejadian kartu kedua runtuh
+
+# Menghitung peluang kartu kedua runtuh
+peluang_runtuh <- mean(hasil_simulasi)
+# menghitung peluang runtuh sebagai proporsi kejadian runtuh
+
+# Menampilkan hasil
+cat("Jumlah kartu kedua runtuh:", jumlah_runtuh, "\n")
+# catatan/penjelasan: menampilkan total kejadian runtuh dari seluruh simulasi
+
+cat("Peluang kartu kedua runtuh:", peluang_runtuh, "\n")
+# catatan/penjelasan: menampilkan peluang kartu kedua runtuh
+```
